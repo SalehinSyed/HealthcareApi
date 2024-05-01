@@ -1,0 +1,4 @@
+# Environment variables 
+# .env - Normally this would be included
+/node_modules
+/dist
