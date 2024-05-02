@@ -1,5 +1,14 @@
 import pool from "../config/dbConfig";
 
+/**
+ * Fetches all questionnaires from the database with optional pagination and filtering by health condition.
+ *
+ * @param Object queryOptions - The pagination and filter options.
+ * @param number queryOptions.page - The page number for pagination.
+ * @param number queryOptions.pageSize - The number of items per page for pagination.
+ * @param string [queryOptions.health_condition] - The health condition to filter by.
+ * @returns Promise - A promise that resolves to the questionnaires.
+ */
 export const getAllQuestionnaires = async (queryOptions: {
   page: number;
   pageSize: number;
@@ -24,6 +33,13 @@ export const getAllQuestionnaires = async (queryOptions: {
   return await pool.query(queryText, queryParams);
 };
 
+/**
+ * Inserts a new questionnaire into the database.
+ * If the health condition is 'chronic_illness', it also inserts the chronic details.
+ *
+ * @param Object data - The questionnaire data.
+ * @returns Promise - A promise that resolves to the result of the questionnaire insertion.
+ */
 export const insertQuestionnaire = async (data: any) => {
   const {
     name,
@@ -50,8 +66,6 @@ export const insertQuestionnaire = async (data: any) => {
   const response = await pool.query(insertText, insertValues);
   const questionnaireId = response.rows[0].id;
 
-  console.log(health_condition);
-
   // Check if health_condition is 'Chronic illness' and chronicDetails is provided
   if (health_condition === "chronic_illness" && chronicDetails) {
     const { detail, medication } = chronicDetails;
@@ -63,5 +77,5 @@ export const insertQuestionnaire = async (data: any) => {
     await pool.query(chronicInsertText, chronicInsertValues);
   }
 
-  return response; // Return the original insertion response (could adjust to include more details if needed)
+  return response;
 };
